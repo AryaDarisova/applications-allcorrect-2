@@ -44,7 +44,7 @@ export default function Form(props) {
                                     <label htmlFor="inputAppId" className="form-label"><strong>Id
                                         приложения/игры</strong></label>
                                     <input className="form-control" id="inputAppId" name="inputAppId"
-                                           placeholder="google_play: com.miniclip.plagueinc app_store: 525818839 steam: 939850" />
+                                           placeholder="пример: Google Play - com.miniclip.plagueinc; App Store - 525818839; Steam - 939850" />
                                 </div>
                             </div>
                             <br />
