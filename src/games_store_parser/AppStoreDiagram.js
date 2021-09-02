@@ -12,7 +12,7 @@ const styles = {
 
 export default function AppStoreDiagram(props) {
     let data = {
-        labels: ["1", "2", "3", "4", "5"],
+        labels: props.data.histogram,
         datasets: [
             {
                 // label: "Review Avg. " + props.data.ratings,

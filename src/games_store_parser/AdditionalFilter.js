@@ -1,11 +1,15 @@
-export default function AdditionalFilter({checked, steamRemoveEnglish, googlePlayFoundByFilter}) {
+export default function AdditionalFilter({checked, steamRemoveEnglish/*, googlePlayFoundByFilter*/}) {
     return(
         <div>
             {
                 checked.map(store => {
                     if (store.checked) {
-                        if (store.id === "googlePlay") {
-                            return (
+                        if (store.id === "appStore") {
+                            /*return(
+                                <div key={store.id}>There is {store.name}</div>
+                            )*/
+                        } else if (store.id === "googlePlay") {
+                            /*return (
                                 <div key={store.id}>
                                     <div className="row">
                                         <div className="col-sm-12">
@@ -28,7 +32,7 @@ export default function AdditionalFilter({checked, steamRemoveEnglish, googlePla
                                         </div>
                                     </div>
                                 </div>
-                            )
+                            )*/
                         } else if (store.id === "steam") {
                             return (
                                 <div key={store.id}>
@@ -43,10 +47,6 @@ export default function AdditionalFilter({checked, steamRemoveEnglish, googlePla
                                         </div>
                                     </div>
                                 </div>
-                            )
-                        } else {
-                            return(
-                                <div key={store.id}>There is {store.name}</div>
                             )
                         }
                     }

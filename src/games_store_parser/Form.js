@@ -49,7 +49,7 @@ export default function Form(props) {
                             </div>
                             <br />
                             <AdditionalFilter checked={props.gameStores} steamRemoveEnglish={props.steamRemoveEnglish}
-                                              googlePlayFoundByFilter={props.googlePlayFoundByFilter} />
+                                              /*googlePlayFoundByFilter={props.googlePlayFoundByFilter}*/ />
                             <br />
                             <div className="row">
                                 <div className="col-sm-12" style={styles.blockCenter}>

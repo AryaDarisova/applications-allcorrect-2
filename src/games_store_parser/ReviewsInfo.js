@@ -15,7 +15,7 @@ const styles = {
     },
 
     columnBlock: {
-        width: '50%',
+        width: '33%',
         display: 'inline-block'
     }
 }
@@ -41,7 +41,7 @@ export default function ReviewsInfo(props) {
             {
                 props.gameStores.map(store => {
                     if (store.checked) {
-                        if (store.id === "googlePlay" && store.infoReady) {
+                        if (store.id === "googlePlay" && store.infoReady && store.data.length) {
                             return(
                                 <div key={store.id}>
                                     {
@@ -55,11 +55,13 @@ export default function ReviewsInfo(props) {
                                     }
                                 </div>
                             )
-                        } else if (store.id === "appStore" && store.infoReady) {
+                        } else if (store.id === "appStore" && store.infoReady && store.data.length) {
                             return (
                                 <div key={store.id}>
                                     {
                                         store.data.map(dataItem => {
+                                            // console.log("dataItem.name", dataItem.name);
+
                                             return (
                                                 <div key={dataItem.id} style={styles.columnBlock}>
                                                     <AppStoreDiagram data={dataItem} />
@@ -89,6 +91,7 @@ export default function ReviewsInfo(props) {
                             )*/
                         } else if (store.id === "steam" && store.infoReady) {
                             let values = new Map();
+                            let allReviewsCount = 0;
 
                             store.data.map(item => {
                                 let value = new Map();
@@ -97,11 +100,13 @@ export default function ReviewsInfo(props) {
                                     value.set("name", item.language);
                                     value.set("positive", 0);
                                     value.set("negative", 0);
+                                    value.set("all", 0);
 
                                     values.set(item.language, value);
                                 } else {
                                     let positive = values.get(item.language).get("positive");
                                     let negative = values.get(item.language).get("negative");
+                                    let all = values.get(item.language).get("all");
 
                                     if (item.voted_up) {
                                         positive++;
@@ -109,9 +114,13 @@ export default function ReviewsInfo(props) {
                                         negative++;
                                     }
 
+                                    all++;
+                                    allReviewsCount++;
+
                                     value.set("name", item.language);
                                     value.set("positive", positive);
                                     value.set("negative", negative);
+                                    value.set("all", all);
 
                                     values.set(item.language, value);
                                 }
@@ -119,43 +128,82 @@ export default function ReviewsInfo(props) {
                                 return item
                             })
 
-                            let labels = [];
-                            let positiveData = [];
-                            let negativeData = [];
-                            let persents = [];
+                            let dataArray = [];
 
                             if (storesAddFilter[0].clearLanguages) {
-                                let reviewSumm = 0;
-                                let clearReviewSumm = 0;
+                                let otherData = [];
 
                                 values.forEach(function (value, key) {
-                                    reviewSumm += value.get("positive");
-                                    reviewSumm += value.get("negative");
-                                })
+                                    let persent = value.get("all") / allReviewsCount * 100;
+                                    persent = +persent.toFixed(2);
 
-                                values.forEach(function (value, key) {
-                                    let summ = value.get("positive") + value.get("negative");
-                                    let persent = summ / reviewSumm * 100;
+                                    if (persent > 0.10) {
+                                        dataArray.push({
+                                            label: key,
+                                            positive: value.get("positive"),
+                                            negative: value.get("negative"),
+                                            all: value.get("all"),
+                                            percent: persent
+                                        });
+                                    } else {
+                                        let otherItem = {
+                                            positive: value.get("positive"),
+                                            negative: value.get("negative"),
+                                            all: value.get("all"),
+                                            percent: persent
+                                        }
 
-                                    if (persent > 0.1) {
-                                        clearReviewSumm += value.get("positive");
-                                        clearReviewSumm += value.get("negative");
-
-                                        labels.push(key);
-                                        positiveData.push(value.get("positive"));
-                                        negativeData.push(value.get("negative"));
-                                        // persents.push()
+                                        otherData.push(otherItem);
                                     }
                                 })
 
+                                if (otherData.length) {
+                                    let otherPositiveValue = 0;
+                                    let otherNegativeValue = 0;
+                                    let otherAllValue = 0;
+                                    let otherPercentValue = 0;
+
+                                    for (let i = 0; i < otherData.length; i++) {
+                                        otherPositiveValue += otherData[i].positive;
+                                        otherNegativeValue += otherData[i].negative;
+                                        otherAllValue += otherData[i].all;
+                                        otherPercentValue += otherData[i].percent;
+                                    }
+
+                                    dataArray.push({
+                                        label: "Other",
+                                        positive: otherPositiveValue,
+                                        negative: otherNegativeValue,
+                                        all: otherAllValue,
+                                        percent: otherPercentValue
+                                    });
+                                }
                             } else {
                                 values.forEach(function (value, key) {
-                                    labels.push(key);
-                                    positiveData.push(value.get("positive"));
-                                    negativeData.push(value.get("negative"));
-                                    // persents.push()
+                                    let persent = value.get("all") / allReviewsCount * 100;
+                                    persent = +persent.toFixed(2);
+
+                                    dataArray.push({
+                                        label: key,
+                                        positive: value.get("positive"),
+                                        negative: value.get("negative"),
+                                        all: value.get("all"),
+                                        percent: persent
+                                    });
                                 })
                             }
+
+                            dataArray.sort((a, b) => b.all - a.all);
+
+                            let labels = [];
+                            let positiveData = [];
+                            let negativeData = [];
+
+                            dataArray.forEach(function (value) {
+                                labels.push(value.label);
+                                positiveData.push(value.positive);
+                                negativeData.push(value.negative);
+                            });
 
                             let data = {
                                 labels: labels,
@@ -187,11 +235,27 @@ export default function ReviewsInfo(props) {
 
                             return(
                                 <div key={store.id}>
-                                    {
-
-                                    }
                                     <br />
                                     <div className="row">
+                                        <div className="col-sm-6">
+                                            <div style={styles.blockView}>
+                                                <strong>Total reviews:</strong> {allReviewsCount}
+                                                <br />
+                                                <br />
+                                                {
+                                                    dataArray.map(item => {
+                                                        return (
+                                                            <div key={item.label}>
+                                                                <strong>{item.label}:</strong> {item.all} ({item.percent}%)
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-3">
+
+                                        </div>
                                         <div className="col-sm-3">
                                             <div className="form-check" style={styles.blockView}>
                                                 <div className="mb-3 form-check">
@@ -201,7 +265,7 @@ export default function ReviewsInfo(props) {
                                                            checked={storesAddFilter[0].clearLanguages}
                                                            onChange={() => steamClearLanguages()}/>
                                                     <label className="form-check-label"
-                                                           htmlFor="steamClearLanguages">Убрать языки с &lt;0.1% отзывов от общего количества</label>
+                                                           htmlFor="steamClearLanguages">Убрать языки с &lt;<strong>0.1%</strong> отзывов от общего количества</label>
                                                 </div>
                                             </div>
                                         </div>
