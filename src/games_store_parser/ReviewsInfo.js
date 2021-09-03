@@ -175,7 +175,7 @@ export default function ReviewsInfo(props) {
                                         positive: otherPositiveValue,
                                         negative: otherNegativeValue,
                                         all: otherAllValue,
-                                        percent: otherPercentValue
+                                        percent: +otherPercentValue.toFixed(2)
                                     });
                                 }
                             } else {

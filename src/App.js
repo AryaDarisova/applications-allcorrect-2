@@ -263,12 +263,12 @@ function App() {
 
     async function steamRekursivelyGetReviews(cursor, appId, lang, langLength) {
         let response = await fetch(
-            `https://store.steampowered.com/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`, {
+            `https://store.steampowered.com/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`/*, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Access-Control-Allow-Origin': 'http://localhost:3000/'
                 }
-            });
+            }*/);
 
         if (response.ok) {
             let json = await response.json();
@@ -308,7 +308,7 @@ function App() {
             <Form gameStores={gameStores} storeCLick={storeCLick} getReviewsInfo={getReviewsInfo}
                   steamRemoveEnglish={steamRemoveEnglish} /*googlePlayFoundByFilter={googlePlayFoundByFilter}*/ />
             <br />
-            <ReviewsInfo gameStores={gameStores}/>
+            <ReviewsInfo gameStores={gameStores} />
         </div>
     );
 }
