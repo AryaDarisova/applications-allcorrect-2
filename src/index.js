@@ -5,6 +5,12 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+/*const cors = require('cors');
+const express = require('express');
+const app = express();
+app.use(cors());
+app.options('*', cors());*/
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

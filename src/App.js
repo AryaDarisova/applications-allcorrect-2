@@ -263,10 +263,14 @@ function App() {
 
     async function steamRekursivelyGetReviews(cursor, appId, lang, langLength) {
         let response = await fetch(
-            `https://store.steampowered.com/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`, {
+            `https://applications-allcorrect-5742j.ondigitalocean.app:8080/store.steampowered.com/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`, {
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'/*,
-                    'Access-Control-Allow-Origin': 'https://store.steampowered.com'*/
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Access-Control-Allow-Origin': 'https://store.steampowered.com',
+                    'Request-Method': 'GET',
+                    'Origin': 'https://applications-allcorrect-5742j.ondigitalocean.app',
+                    'Referer': 'https://applications-allcorrect-5742j.ondigitalocean.app',
+                    'x-requested-with': 'fetch'
                 }
             });
 
