@@ -265,8 +265,8 @@ function App() {
         let response = await fetch(
             `https://store.steampowered.com/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`, {
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Access-Control-Allow-Origin': 'https://store.steampowered.com'
+                    'Content-Type': 'application/x-www-form-urlencoded'/*,
+                    'Access-Control-Allow-Origin': 'https://store.steampowered.com'*/
                 }
             });
 
