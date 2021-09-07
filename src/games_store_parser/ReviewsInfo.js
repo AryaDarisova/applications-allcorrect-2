@@ -274,6 +274,12 @@ export default function ReviewsInfo(props) {
                                     <Bar data={data} options={options} />
                                 </div>
                             )
+                        } else if (store.id === "steam" && store.infoOnGet) {
+                            return (
+                                <div key={store.id}>
+                                    On download...
+                                </div>
+                            )
                         }
                     }
                 })

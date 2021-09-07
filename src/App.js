@@ -71,7 +71,7 @@ function App() {
                 {id: "vietnamese", name: "Vietnamese", countryCodes: ['VN']},
                 {id: "czech", name: "Czech", countryCodes: ['CZ']},
             ]},
-        {id: 'steam', name: 'Steam', checked: false, infoReady: false, removeEnglish: false,
+        {id: 'steam', name: 'Steam', checked: false, infoOnGet: false, infoReady: false, removeEnglish: false,
             languageList: [
                 {id: "arabic", webId: "ar", name: "арабский"},
                 {id: "brazilian", webId: "pt-BR", name: "бразильский португальский"},
@@ -152,6 +152,8 @@ function App() {
 
                     for (let i = 0; i < store.languageList.length; i++) {
                         for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
+                            // googlePlayGetReviews(appId, store.languageList[i].languageCodes[j], "us");
+
                             googlePlayReviews.app({
                                 appId: appId,
                                 lang: store.languageList[i].languageCodes[j]
@@ -228,6 +230,7 @@ function App() {
                 } else if (store.id === "steam") {
                     countSteamLanguages = 0;
                     setInfoReady("steam", false);
+                    setInfoOnGet("steam", true);
 
                     if (store.removeEnglish) {
                         for (let i = 0; i < store.languageList.length; i++) {
@@ -261,8 +264,32 @@ function App() {
         }))
     }
 
-    async function steamRekursivelyGetReviews(cursor, appId, lang, langLength) {
+    function setInfoOnGet(storeName, value) {
+        setGameStores(gameStores.map(store => {
+            if (store.id === storeName) {
+                store.infoOnGet = value;
+            }
+
+            return store
+        }))
+    }
+
+    async function googlePlayGetReviews(appId, langId, countyId) {
         let response = await fetch(
+            `/store/apps/details?id=${appId}&hl=${langId}&gl=us`
+        );
+
+        if (response.ok) {
+            console.log(response);
+            /*let json = await response.json();
+            console.log(json);*/
+        } else {
+            alert("Ошибка HTTP: " + response.status + " во время получения данных языка " + langId);
+        }
+    }
+
+    async function steamRekursivelyGetReviews(cursor, appId, lang, langLength) {
+        /*let response = await fetch(
             `https://applications-allcorrect-5742j.ondigitalocean.app:8080/store.steampowered.com/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -272,7 +299,11 @@ function App() {
                     'Referer': 'https://applications-allcorrect-5742j.ondigitalocean.app',
                     'x-requested-with': 'fetch'
                 }
-            });
+            });*/
+
+        let response = await fetch(
+            `/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`
+        );
 
         if (response.ok) {
             let json = await response.json();
@@ -297,6 +328,7 @@ function App() {
                 steamRekursivelyGetReviews(encodeURIComponent(json.cursor), appId, lang, langLength);
             } else {
                 if (countSteamLanguages === (langLength - 1)) {
+                    setInfoOnGet("steam", false);
                     setInfoReady("steam", true);
                 } else {
                     countSteamLanguages++;
