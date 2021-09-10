@@ -102,7 +102,7 @@ function App() {
                 {id: "turkish", webId: "tr", name: "турецкий"},
                 {id: "ukrainian", webId: "uk", name: "украинский"},
                 {id: "vietnamese", webId: "vn", name: "вьетнамский"}
-            ],  data: []},
+            ],  data: [], languageClearPercent: 0.10, languageClearPercentOnInput: 0.10},
     ])
 
     function storeCLick(id) {
@@ -150,10 +150,68 @@ function App() {
                     setInfoReady("googlePlay", false);
                     let googlePlayReviews = require('google-play-scraper');
 
-                    for (let i = 0; i < store.languageList.length; i++) {
-                        for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
-                            // googlePlayGetReviews(appId, store.languageList[i].languageCodes[j], "us");
+                    googlePlayReviews.app({
+                        appId: appId,
+                        lang: "ja",
+                        country: "jp"
+                    })
+                        .then(
+                            result => {
+                                console.log(result);
 
+                                /*let dataItem = {
+                                    "id": store.languageList[i].languageCodes[j],
+                                    "name": store.languageList[i].name,
+                                    "ratings": result.ratings,
+                                    "histogram": [result.histogram[1], result.histogram[2], result.histogram[3],
+                                        result.histogram[4], result.histogram[5]]
+                                }
+
+                                store.data.push(dataItem);
+
+                                if (i === (store.languageList.length - 1) &&
+                                    j === (store.languageList[i].languageCodes.length - 1)) {
+                                    setInfoReady("googlePlay", true);
+                                }*/
+                            }
+                        )
+                        .catch(
+                            error => {
+                                alert("Ошибка");
+                            }
+                        );
+
+                    googlePlayReviews.app({
+                        appId: appId,
+                        lang: "it",
+                        country: "it"
+                    })
+                        .then(
+                            result => {
+                                console.log(result);
+                                /*let dataItem = {
+                                    "id": store.languageList[i].languageCodes[j],
+                                    "name": store.languageList[i].name,
+                                    "ratings": result.ratings,
+                                    "histogram": [result.histogram[1], result.histogram[2], result.histogram[3],
+                                        result.histogram[4], result.histogram[5]]
+                                }
+
+                                store.data.push(dataItem);
+
+                                if (i === (store.languageList.length - 1) &&
+                                    j === (store.languageList[i].languageCodes.length - 1)) {
+                                    setInfoReady("googlePlay", true);
+                                }*/
+                            }
+                        )
+                        .catch(
+                            error => {
+                                alert("Ошибка");
+                            }
+                        );
+                    /*for (let i = 0; i < store.languageList.length; i++) {
+                        for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
                             googlePlayReviews.app({
                                 appId: appId,
                                 lang: store.languageList[i].languageCodes[j]
@@ -183,7 +241,7 @@ function App() {
                                     }
                                 );
                         }
-                    }
+                    }*/
                 } else if (store.id === "appStore") {
                     setInfoReady("appStore", false);
                     let appStoreReviews = require('app-store-scraper');
@@ -274,18 +332,28 @@ function App() {
         }))
     }
 
-    async function googlePlayGetReviews(appId, langId, countyId) {
-        let response = await fetch(
-            `/store/apps/details?id=${appId}&hl=${langId}&gl=us`
-        );
+    function setSteamLanguageClearPercent(value) {
+        setGameStores(gameStores.map(store => {
+            if (store.id === "steam") {
+                // store.languageClearPercent = store.languageClearPercentOnInput;
+                store.languageClearPercent = value;
+                console.log(store.languageClearPercent);
+            }
 
-        if (response.ok) {
-            console.log(response);
-            /*let json = await response.json();
-            console.log(json);*/
-        } else {
-            alert("Ошибка HTTP: " + response.status + " во время получения данных языка " + langId);
-        }
+            return store
+        }))
+    }
+
+    function setSteamLanguageClearPercentOnInput(e) {
+        console.log("попали в изменение процентов on input");
+
+        setGameStores(gameStores.map(store => {
+            if (store.id === "steam") {
+                store.languageClearPercentOnInput = e.target.elements.inputSteamClearLanguagesPercent.value;
+            }
+
+            return store
+        }))
     }
 
     async function steamRekursivelyGetReviews(cursor, appId, lang, langLength) {
@@ -344,7 +412,8 @@ function App() {
             <Form gameStores={gameStores} storeCLick={storeCLick} getReviewsInfo={getReviewsInfo}
                   steamRemoveEnglish={steamRemoveEnglish} /*googlePlayFoundByFilter={googlePlayFoundByFilter}*/ />
             <br />
-            <ReviewsInfo gameStores={gameStores} />
+            <ReviewsInfo gameStores={gameStores} setSteamLanguageClearPercent={setSteamLanguageClearPercent}
+                         setSteamLanguageClearPercentOnInput={setSteamLanguageClearPercentOnInput}/>
         </div>
     );
 }

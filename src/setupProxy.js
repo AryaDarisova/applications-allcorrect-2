@@ -10,6 +10,14 @@ module.exports = function (app) {
     );
 
     /*app.use(
+        proxy("/store/apps", {
+            target: "https://play.google.com",
+            secure: false,
+            changeOrigin: true
+        })
+    );*/
+
+    /*app.use(
         proxy("/store", {
             target: "https://play.google.com",
             secure: false,
@@ -20,7 +28,7 @@ module.exports = function (app) {
     /*app.use(
         proxy("/store/apps", {
             target: "https://play.google.com",
-            // secure: false,
+            secure: false,
             changeOrigin: true
         })
     );*/

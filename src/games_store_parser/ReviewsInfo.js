@@ -1,6 +1,9 @@
 import React from "react";
 import {Bar} from "react-chartjs-2";
 import AppStoreDiagram from "./AppStoreDiagram";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSpinner} from "@fortawesome/free-solid-svg-icons";
+import {faExchangeAlt} from "@fortawesome/free-solid-svg-icons";
 
 const styles = {
     blockCenter: {
@@ -17,6 +20,14 @@ const styles = {
     columnBlock: {
         width: '33%',
         display: 'inline-block'
+    },
+
+    inputPercent: {
+        width: '50px',
+    },
+
+    inputCheckbox: {
+        marginLeft: '0px',
     }
 }
 
@@ -137,7 +148,7 @@ export default function ReviewsInfo(props) {
                                     let persent = value.get("all") / allReviewsCount * 100;
                                     persent = +persent.toFixed(2);
 
-                                    if (persent > 0.10) {
+                                    if (persent >= store.languageClearPercent) {
                                         dataArray.push({
                                             label: key,
                                             positive: value.get("positive"),
@@ -253,21 +264,33 @@ export default function ReviewsInfo(props) {
                                                 }
                                             </div>
                                         </div>
-                                        <div className="col-sm-3">
+                                        <div className="col-sm-1">
 
                                         </div>
-                                        <div className="col-sm-3">
-                                            <div className="form-check" style={styles.blockView}>
-                                                <div className="mb-3 form-check">
-                                                    <input type="checkbox" className="form-check-input"
-                                                           id="steamClearLanguages"
-                                                           name="steamClearLanguages"
-                                                           checked={storesAddFilter[0].clearLanguages}
-                                                           onChange={() => steamClearLanguages()}/>
-                                                    <label className="form-check-label"
-                                                           htmlFor="steamClearLanguages">Убрать языки с &lt;<strong>0.1%</strong> отзывов от общего количества</label>
+                                        <div className="col-sm-5">
+                                                <div className="form-check" style={styles.blockView}>
+                                                    <div className="row">
+                                                        <div className="col-sm-1 form-check">
+                                                            <input type="checkbox" className="form-check-input"
+                                                                   id="steamClearLanguages"
+                                                                   name="steamClearLanguages"
+                                                                   checked={storesAddFilter[0].clearLanguages}
+                                                                   onChange={() => steamClearLanguages()} style={styles.inputCheckbox}/>
+                                                        </div>
+                                                        <div className="col-sm-8">
+                                                            <label className="form-check-label">Убрать языки с количеством процентов менее </label>
+                                                        </div>
+                                                        <div className="col-sm-2">
+                                                            <input
+                                                                className="form-control"
+                                                                id="inputSteamClearLanguagesPercent"
+                                                                name="inputSteamClearLanguagesPercent"
+                                                                defaultValue={store.languageClearPercent}
+                                                                onChange={e => props.setSteamLanguageClearPercent(e.target.value)}
+                                                                style={styles.inputPercent}/>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
                                         </div>
                                     </div>
                                     <br />
@@ -277,7 +300,7 @@ export default function ReviewsInfo(props) {
                         } else if (store.id === "steam" && store.infoOnGet) {
                             return (
                                 <div key={store.id}>
-                                    On download...
+                                    On download <FontAwesomeIcon icon={faSpinner} spin />
                                 </div>
                             )
                         }
