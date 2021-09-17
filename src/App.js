@@ -313,7 +313,11 @@ function App() {
             sort: googlePlayReviews.sort.NEWEST,
             paginate: true,
             nextPaginationToken: nextPaginationToken,
-            headers: {"Cache-Control" : "no-cache"},
+            headers: {
+                // "Origin": "http://localhost:3000",
+                "Origin": "https://applications-allcorrect-5742j.ondigitalocean.app",
+                "Cache-Control": "no-cache"
+            },
             requestOptions: {proxy: 'https://play.google.com'}
         })
             .then(
