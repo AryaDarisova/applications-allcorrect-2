@@ -190,8 +190,8 @@ export default function ReviewsInfo(props) {
                             )
 
                         } else if (store.id === "appStore" && store.infoReady && store.data.length) {
-                            // console.log("store.data", store.data);
-                            // store.data.sort((a, b) => b.all - a.all);
+                            console.log("store.data", store.data);
+                            store.data.sort((a, b) => b.ratings - a.ratings);
 
                             return (
                                 <div key={store.id}>

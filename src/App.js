@@ -312,7 +312,9 @@ function App() {
             lang: lang,
             sort: googlePlayReviews.sort.NEWEST,
             paginate: true,
-            nextPaginationToken: nextPaginationToken
+            nextPaginationToken: nextPaginationToken,
+            headers: {"Cache-Control" : "no-cache"},
+            requestOptions: {proxy: 'https://play.google.com'}
         })
             .then(
                 result => {
