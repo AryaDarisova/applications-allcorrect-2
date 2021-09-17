@@ -313,12 +313,12 @@ function App() {
             sort: googlePlayReviews.sort.NEWEST,
             paginate: true,
             nextPaginationToken: nextPaginationToken,
-            headers: {
-                // "Origin": "http://localhost:3000",
-                "Origin": "https://applications-allcorrect-5742j.ondigitalocean.app",
+            /*headers: {
+                "Origin": "http://localhost:3000",
+                // "Origin": "https://applications-allcorrect-5742j.ondigitalocean.app",
                 "Cache-Control": "no-cache"
-            },
-            requestOptions: {proxy: 'https://play.google.com'}
+            },*/
+            // requestOptions: {proxy: 'https://google.com'}
         })
             .then(
                 result => {

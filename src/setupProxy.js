@@ -10,10 +10,10 @@ module.exports = function (app) {
     );
 
     /*app.use(
-        '/',
-        proxy({
-            target: 'https://play.google.com',
-            changeOrigin: true,
+        proxy("/", {
+            target: "https://play.google.com",
+            secure: false,
+            changeOrigin: true
         })
     );*/
 
