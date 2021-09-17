@@ -10,6 +10,14 @@ module.exports = function (app) {
     );
 
     /*app.use(
+        '/',
+        proxy({
+            target: 'https://play.google.com',
+            changeOrigin: true,
+        })
+    );*/
+
+    /*app.use(
         proxy("/store/apps", {
             target: "https://play.google.com",
             secure: false,

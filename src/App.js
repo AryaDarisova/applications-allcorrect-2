@@ -3,7 +3,9 @@ import Form from "./games_store_parser/Form";
 import ReviewsInfo from "./games_store_parser/ReviewsInfo";
 
 function App() {
+    let countGooglePlayLanguages = 0;
     let countSteamLanguages = 0;
+    let googlePlayReviews = require('google-play-scraper');
 
     const [gameStores, setGameStores] = React.useState([
         {id: 'googlePlay', name: 'Google Play', checked: false, infoReady: false, data: [],
@@ -117,19 +119,6 @@ function App() {
         }))
     }
 
-    /*function googlePlayFoundByFilter(filter) {
-        setGameStores(gameStores.map(store => {
-            if (store.id === "googlePlay") {
-                store.foundByLanguage = !store.foundByLanguage
-                store.foundByCountry = !store.foundByCountry
-
-                console.log("store.foundByLanguage", store.foundByLanguage, "store.foundByCountry", store.foundByCountry)
-            }
-
-            return store
-        }))
-    }*/
-
     function steamRemoveEnglish() {
         setGameStores(gameStores.map(store => {
             if (store.id === "steam") {
@@ -147,70 +136,31 @@ function App() {
         /*setGameStores(*/gameStores.map(store => {
             if (store.checked) {
                 if (store.id === "googlePlay") {
+                    countGooglePlayLanguages = 0;
+                    setInfoReady("googlePlay", false);
+                    setInfoOnGet("googlePlay", true);
+
+                    /*if (store.removeEnglish) {
+                        for (let i = 0; i < store.languageList.length; i++) {
+                            if (store.languageList[i].id !== "english") {
+                                steamRekursivelyGetReviews("*", appId, store.languageList[i].id, store.languageList.length - 1);
+                            }
+                        }
+                    } else {*/
+                        for (let i = 0; i < store.languageList.length; i++) {
+                            for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
+                                googlePlayRekursivelyGetReviews(null, appId, store.languageList[i].languageCodes[j],
+                                    store.languageList.length, store.languageList[i].name);
+                            }
+                        }
+                    /*}*/
+
+
+                    /*
                     setInfoReady("googlePlay", false);
                     let googlePlayReviews = require('google-play-scraper');
 
-                    googlePlayReviews.app({
-                        appId: appId,
-                        lang: "ja",
-                        country: "jp"
-                    })
-                        .then(
-                            result => {
-                                console.log(result);
-
-                                /*let dataItem = {
-                                    "id": store.languageList[i].languageCodes[j],
-                                    "name": store.languageList[i].name,
-                                    "ratings": result.ratings,
-                                    "histogram": [result.histogram[1], result.histogram[2], result.histogram[3],
-                                        result.histogram[4], result.histogram[5]]
-                                }
-
-                                store.data.push(dataItem);
-
-                                if (i === (store.languageList.length - 1) &&
-                                    j === (store.languageList[i].languageCodes.length - 1)) {
-                                    setInfoReady("googlePlay", true);
-                                }*/
-                            }
-                        )
-                        .catch(
-                            error => {
-                                alert("Ошибка");
-                            }
-                        );
-
-                    googlePlayReviews.app({
-                        appId: appId,
-                        lang: "it",
-                        country: "it"
-                    })
-                        .then(
-                            result => {
-                                console.log(result);
-                                /*let dataItem = {
-                                    "id": store.languageList[i].languageCodes[j],
-                                    "name": store.languageList[i].name,
-                                    "ratings": result.ratings,
-                                    "histogram": [result.histogram[1], result.histogram[2], result.histogram[3],
-                                        result.histogram[4], result.histogram[5]]
-                                }
-
-                                store.data.push(dataItem);
-
-                                if (i === (store.languageList.length - 1) &&
-                                    j === (store.languageList[i].languageCodes.length - 1)) {
-                                    setInfoReady("googlePlay", true);
-                                }*/
-                            }
-                        )
-                        .catch(
-                            error => {
-                                alert("Ошибка");
-                            }
-                        );
-                    /*for (let i = 0; i < store.languageList.length; i++) {
+                    for (let i = 0; i < store.languageList.length; i++) {
                         for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
                             googlePlayReviews.app({
                                 appId: appId,
@@ -305,7 +255,7 @@ function App() {
             }
 
             return store
-        })/*)*/
+        })
     }
 
     function setInfoReady(storeName, value) {
@@ -354,6 +304,49 @@ function App() {
 
             return store
         }))
+    }
+
+    /*async */function googlePlayRekursivelyGetReviews(nextPaginationToken, appId, lang, langLength, langName) {
+        googlePlayReviews.reviews({
+            appId: appId,
+            lang: lang,
+            sort: googlePlayReviews.sort.NEWEST,
+            paginate: true,
+            nextPaginationToken: nextPaginationToken
+        })
+            .then(
+                result => {
+                    // console.log(lang, result);
+
+                    setGameStores(gameStores.map(store => {
+                        if (store.id === "googlePlay") {
+                            for (let i = 0; i < result.data.length; i++) {
+                                let dataItem = {
+                                    "language": langName + " (" + lang + ")",
+                                    "score": result.data[i].score
+                                };
+
+                                store.data.push(dataItem);
+                            }
+                        }
+
+                        return store
+                    }))
+
+                    if (result.nextPaginationToken) {
+                        googlePlayRekursivelyGetReviews(result.nextPaginationToken, appId, lang, langLength, langName);
+                    } else {
+                        if (countGooglePlayLanguages === (langLength - 1)) {
+                            setInfoOnGet("googlePlay", false);
+                            setInfoReady("googlePlay", true);
+                        } else {
+                            countGooglePlayLanguages++;
+                        }
+                    }
+                }
+            );
+
+
     }
 
     async function steamRekursivelyGetReviews(cursor, appId, lang, langLength) {

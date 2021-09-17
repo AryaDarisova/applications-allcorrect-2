@@ -4,6 +4,7 @@ import AppStoreDiagram from "./AppStoreDiagram";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {faExchangeAlt} from "@fortawesome/free-solid-svg-icons";
+import GooglePlayDiagram from "./GooglePlayDiagram";
 
 const styles = {
     blockCenter: {
@@ -52,54 +53,159 @@ export default function ReviewsInfo(props) {
             {
                 props.gameStores.map(store => {
                     if (store.checked) {
-                        if (store.id === "googlePlay" && store.infoReady && store.data.length) {
-                            return(
-                                <div key={store.id}>
-                                    {
-                                        store.data.map(dataItem => {
-                                            return (
-                                                <div key={dataItem.id} style={styles.columnBlock}>
-                                                    <AppStoreDiagram data={dataItem} />
-                                                </div>
-                                            )
-                                        })
+                        if (store.id === "googlePlay" && store.infoReady/* && store.data.length*/) {
+                            let values = new Map();
+                            let allReviewsCount = 0;
+
+                            store.data.map(item => {
+                                let value = new Map();
+
+                                if (!values.has(item.language)) {
+                                    value.set("name", item.language);
+                                    value.set("1", 0);
+                                    value.set("2", 0);
+                                    value.set("3", 0);
+                                    value.set("4", 0);
+                                    value.set("5", 0);
+                                    value.set("all", 0);
+
+                                    values.set(item.language, value);
+                                } else {
+                                    let scoreOne = values.get(item.language).get("1");
+                                    let scoreTwo = values.get(item.language).get("2");
+                                    let scoreThree = values.get(item.language).get("3");
+                                    let scoreFour = values.get(item.language).get("4");
+                                    let scoreFive = values.get(item.language).get("5");
+                                    let all = values.get(item.language).get("all");
+
+                                    if (item.score === 1) {
+                                        scoreOne++;
+                                    } else if (item.score === 2) {
+                                        scoreTwo++;
+                                    } else if (item.score === 3) {
+                                        scoreThree++;
+                                    } else if (item.score === 4) {
+                                        scoreFour++;
+                                    } else if (item.score === 5) {
+                                        scoreFive++;
                                     }
-                                </div>
-                            )
-                        } else if (store.id === "appStore" && store.infoReady && store.data.length) {
-                            return (
-                                <div key={store.id}>
-                                    {
-                                        store.data.map(dataItem => {
-                                            // console.log("dataItem.name", dataItem.name);
 
-                                            return (
-                                                <div key={dataItem.id} style={styles.columnBlock}>
-                                                    <AppStoreDiagram data={dataItem} />
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </div>
-                            )
+                                    all++;
+                                    allReviewsCount++;
 
-                            /*let data = [];
+                                    value.set("name", item.language);
+                                    value.set("1", scoreOne);
+                                    value.set("2", scoreTwo);
+                                    value.set("3", scoreThree);
+                                    value.set("4", scoreFour);
+                                    value.set("5", scoreFive);
+                                    value.set("all", all);
 
-                            for (let i = 0; i < store.data.length; i += 3) {
-                                let item = {
-                                    0: store.data[i],
-                                    1: (i + 1) < store.data.length ? store.data[i + 1] : false,
-                                    2: (i + 2) < store.data.length ? store.data[i + 2] : false
+                                    values.set(item.language, value);
                                 }
 
-                                data.push(item);
-                            }
+                                return item
+                            })
+
+                            let dataArray = [];
+
+                            /*if (storesAddFilter[0].clearLanguages) {
+                                let otherData = [];
+
+                                values.forEach(function (value, key) {
+                                    let persent = value.get("all") / allReviewsCount * 100;
+                                    persent = +persent.toFixed(2);
+
+                                    if (persent >= store.languageClearPercent) {
+                                        dataArray.push({
+                                            label: key,
+                                            positive: value.get("positive"),
+                                            negative: value.get("negative"),
+                                            all: value.get("all"),
+                                            percent: persent
+                                        });
+                                    } else {
+                                        let otherItem = {
+                                            positive: value.get("positive"),
+                                            negative: value.get("negative"),
+                                            all: value.get("all"),
+                                            percent: persent
+                                        }
+
+                                        otherData.push(otherItem);
+                                    }
+                                })
+
+                                if (otherData.length) {
+                                    let otherPositiveValue = 0;
+                                    let otherNegativeValue = 0;
+                                    let otherAllValue = 0;
+                                    let otherPercentValue = 0;
+
+                                    for (let i = 0; i < otherData.length; i++) {
+                                        otherPositiveValue += otherData[i].positive;
+                                        otherNegativeValue += otherData[i].negative;
+                                        otherAllValue += otherData[i].all;
+                                        otherPercentValue += otherData[i].percent;
+                                    }
+
+                                    dataArray.push({
+                                        label: "Other",
+                                        positive: otherPositiveValue,
+                                        negative: otherNegativeValue,
+                                        all: otherAllValue,
+                                        percent: +otherPercentValue.toFixed(2)
+                                    });
+                                }
+                            } else {*/
+                                values.forEach(function (value, key) {
+                                    let persent = value.get("all") / allReviewsCount * 100;
+                                    persent = +persent.toFixed(2);
+
+                                    dataArray.push({
+                                        label: key,
+                                        score: [value.get("1"), value.get("2"), value.get("3"), value.get("4"), value.get("5")],
+                                        all: value.get("all"),
+                                        percent: persent
+                                    });
+                                })
+                            /*}*/
+
+                            dataArray.sort((a, b) => b.all - a.all);
+
+                            console.log("dataArray", dataArray);
 
                             return (
                                 <div key={store.id}>
-                                    <AppStoreDiagram data={store.data} />
+                                    {
+                                        dataArray.map(dataItem => {
+                                            return (
+                                                <div key={dataItem.label} style={styles.columnBlock}>
+                                                    <GooglePlayDiagram data={dataItem} />
+                                                </div>
+                                            )
+                                        })
+                                    }
                                 </div>
-                            )*/
+                            )
+
+                        } else if (store.id === "appStore" && store.infoReady && store.data.length) {
+                            // console.log("store.data", store.data);
+                            // store.data.sort((a, b) => b.all - a.all);
+
+                            return (
+                                <div key={store.id}>
+                                    {
+                                        store.data.map(dataItem => {
+                                            return (
+                                                <div key={dataItem.id} style={styles.columnBlock}>
+                                                    <AppStoreDiagram data={dataItem} />
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            )
                         } else if (store.id === "steam" && store.infoReady) {
                             let values = new Map();
                             let allReviewsCount = 0;
@@ -297,10 +403,40 @@ export default function ReviewsInfo(props) {
                                     <Bar data={data} options={options} />
                                 </div>
                             )
+                        } else if (store.id === "googlePlay" && store.infoOnGet) {
+                            return (
+                                <div key={store.id}>
+                                    <div className="row">
+                                        <div className="col-sm-4">
+
+                                        </div>
+                                        <div className="col-sm-4" style={styles.blockView}>
+                                            <div style={styles.blockCenter}>
+                                                Загрузка данных <FontAwesomeIcon icon={faSpinner} spin/>
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-4">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            )
                         } else if (store.id === "steam" && store.infoOnGet) {
                             return (
                                 <div key={store.id}>
-                                    On download <FontAwesomeIcon icon={faSpinner} spin />
+                                    <div className="row">
+                                        <div className="col-sm-4">
+
+                                        </div>
+                                        <div className="col-sm-4" style={styles.blockView}>
+                                            <div style={styles.blockCenter}>
+                                                Загрузка данных <FontAwesomeIcon icon={faSpinner} spin/>
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-4">
+
+                                        </div>
+                                    </div>
                                 </div>
                             )
                         }
