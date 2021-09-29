@@ -5,10 +5,15 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {faExchangeAlt} from "@fortawesome/free-solid-svg-icons";
 import GooglePlayDiagram from "./GooglePlayDiagram";
+import logo from "../img/logo1.png";
 
 const styles = {
     blockCenter: {
         textAlign: 'center'
+    },
+
+    blockRight: {
+        textAlign: 'right'
     },
 
     blockView: {
@@ -310,7 +315,13 @@ export default function ReviewsInfo(props) {
                                 })
                             }
 
-                            dataArray.sort((a, b) => b.all - a.all);
+                            dataArray.sort(function(a, b) {
+                                if (a.label === "Other") {
+                                    return 1;
+                                } else {
+                                    return b.all - a.all;
+                                }
+                            });
 
                             let labels = [];
                             let positiveData = [];
@@ -400,6 +411,11 @@ export default function ReviewsInfo(props) {
                                         </div>
                                     </div>
                                     <br />
+                                    <div className="row">
+                                        <div className="col-sm-12" style={styles.blockRight}>
+                                            <img src={logo} />
+                                        </div>
+                                    </div>
                                     <Bar data={data} options={options} />
                                 </div>
                             )

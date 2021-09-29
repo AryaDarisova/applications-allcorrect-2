@@ -9,6 +9,14 @@ module.exports = function (app) {
         })
     );
 
+    app.use(
+        proxy("/api/appdetails", {
+            target: "https://store.steampowered.com",
+            secure: false,
+            changeOrigin: true
+        })
+    );
+
     /*app.use(
         proxy("/", {
             target: "https://play.google.com",

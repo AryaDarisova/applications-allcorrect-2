@@ -75,35 +75,35 @@ function App() {
             ]},
         {id: 'steam', name: 'Steam', checked: false, infoOnGet: false, infoReady: false, removeEnglish: false,
             languageList: [
-                {id: "arabic", webId: "ar", name: "арабский"},
-                {id: "brazilian", webId: "pt-BR", name: "бразильский португальский"},
-                {id: "bulgarian", webId: "bg", name: "болгарский"},
-                {id: "czech", webId: "cs", name: "чешский"},
-                {id: "danish", webId: "da", name: "датский"},
-                {id: "dutch", webId: "nl", name: "нидерландский"},
-                {id: "english", webId: "en", name: "английский"},
-                {id: "finnish", webId: "fi", name: "финский"},
-                {id: "french", webId: "fr", name: "французский"},
-                {id: "german", webId: "de", name: "немецкий"},
-                {id: "greek", webId: "el", name: "греческий"},
-                {id: "hungarian", webId: "hu", name: "венгерский"},
-                {id: "italian", webId: "it", name: "итальянский"},
-                {id: "japanese", webId: "ja", name: "японский"},
-                {id: "koreana", webId: "ko", name: "корейский"},
-                {id: "latam", webId: "es-419", name: "испанский (Латинская Америка)"},
-                {id: "norwegian", webId: "no", name: "норвежский"},
-                {id: "polish", webId: "pl", name: "польский"},
-                {id: "portuguese", webId: "pt", name: "португальский"},
-                {id: "romanian", webId: "ro", name: "румынский"},
-                {id: "russian", webId: "ru", name: "русский"},
-                {id: "schinese", webId: "zh-CN", name: "китайский (упрощённый)"},
-                {id: "spanish", webId: "es", name: "испанский (Испания)"},
-                {id: "swedish", webId: "sv", name: "шведский"},
-                {id: "tchinese", webId: "zh-TW", name: "китайский (традиционный)"},
-                {id: "thai", webId: "th", name: "тайский"},
-                {id: "turkish", webId: "tr", name: "турецкий"},
-                {id: "ukrainian", webId: "uk", name: "украинский"},
-                {id: "vietnamese", webId: "vn", name: "вьетнамский"}
+                {id: "arabic", webId: "ar", name: "Arabic"},
+                {id: "brazilian", webId: "pt-BR", name: "Portuguese-Brazil"},
+                {id: "bulgarian", webId: "bg", name: "Bulgarian"},
+                {id: "czech", webId: "cs", name: "Czech"},
+                {id: "danish", webId: "da", name: "Danish"},
+                {id: "dutch", webId: "nl", name: "Dutch"},
+                {id: "english", webId: "en", name: "English"},
+                {id: "finnish", webId: "fi", name: "Finnish"},
+                {id: "french", webId: "fr", name: "French"},
+                {id: "german", webId: "de", name: "German"},
+                {id: "greek", webId: "el", name: "Greek"},
+                {id: "hungarian", webId: "hu", name: "Hungarian"},
+                {id: "italian", webId: "it", name: "Italian"},
+                {id: "japanese", webId: "ja", name: "Japanese"},
+                {id: "koreana", webId: "ko", name: "Korean"},
+                {id: "latam", webId: "es-419", name: "Spanish-Latin America"},
+                {id: "norwegian", webId: "no", name: "Norwegian"},
+                {id: "polish", webId: "pl", name: "Polish"},
+                {id: "portuguese", webId: "pt", name: "Portuguese"},
+                {id: "romanian", webId: "ro", name: "Romanian"},
+                {id: "russian", webId: "ru", name: "Russian"},
+                {id: "schinese", webId: "zh-CN", name: "Chinese (Simplified)"},
+                {id: "spanish", webId: "es", name: "Spanish-Spain"},
+                {id: "swedish", webId: "sv", name: "Swedish"},
+                {id: "tchinese", webId: "zh-TW", name: "Chinese (Traditional)"},
+                {id: "thai", webId: "th", name: "Thai"},
+                {id: "turkish", webId: "tr", name: "Turkish"},
+                {id: "ukrainian", webId: "uk", name: "Ukrainian"},
+                {id: "vietnamese", webId: "vn", name: "Vietnamese"}
             ],  data: [], languageClearPercent: 0.10, languageClearPercentOnInput: 0.10},
     ])
 
@@ -240,6 +240,8 @@ function App() {
                     setInfoReady("steam", false);
                     setInfoOnGet("steam", true);
 
+                    steamGetGameName(appId);
+
                     if (store.removeEnglish) {
                         for (let i = 0; i < store.languageList.length; i++) {
                             if (store.languageList[i].id !== "english") {
@@ -355,6 +357,18 @@ function App() {
 
     }
 
+    async function steamGetGameName(appId) {
+        let getNameResponse = await fetch(
+            `api/appdetails/?json=1&appids=${appId}`
+        );
+
+        if (getNameResponse.ok) {
+            // console.log("STEAM game name", getNameResponse, getNameResponse.json());
+            /*let json = await getNameResponse.json();
+            console.log("STEAM game name", json);*/
+        }
+    }
+
     async function steamRekursivelyGetReviews(cursor, appId, lang, langLength) {
         /*let response = await fetch(
             `https://applications-allcorrect-5742j.ondigitalocean.app:8080/store.steampowered.com/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`, {
@@ -374,13 +388,13 @@ function App() {
 
         if (response.ok) {
             let json = await response.json();
-            // console.log(json);
+            console.log("steam", json);
 
             setGameStores(gameStores.map(store => {
                 if (store.id === "steam") {
                     for (let i = 0; i < json.reviews.length; i++) {
                         let dataItem = {
-                            "language": json.reviews[i].language,
+                            "language": getEngSteamId(store.languageList, json.reviews[i].language),
                             "voted_up": json.reviews[i].voted_up
                         };
 
@@ -403,6 +417,14 @@ function App() {
             }
         } else {
             alert("Ошибка HTTP: " + response.status + " во время получения данных языка " + lang);
+        }
+    }
+
+    function getEngSteamId (steamArr, id) {
+        for (let i = 0; i < steamArr.length; i++) {
+            if (steamArr[i].id === id) {
+                return steamArr[i].name;
+            }
         }
     }
 
