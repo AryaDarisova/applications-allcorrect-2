@@ -38,6 +38,14 @@ export default function AdditionalFilter({checked, steamRemoveEnglish/*, googleP
                                 <div key={store.id}>
                                     <div className="row">
                                         <div className="col-sm-12">
+                                            <label htmlFor="inputAppName" className="form-label"><strong>Название приложения/игры</strong></label>
+                                            <input className="form-control" id="inputAppName" name="inputAppName"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div className="row">
+                                        <div className="col-sm-12">
                                             <div className="form-check">
                                                 <input type="checkbox" className="form-check-input"
                                                        id="steamRemoveEnglishLanguage" name="steamRemoveEnglishLanguage"

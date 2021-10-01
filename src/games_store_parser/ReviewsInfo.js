@@ -411,9 +411,15 @@ export default function ReviewsInfo(props) {
                                         </div>
                                     </div>
                                     <br />
+                                    <br />
                                     <div className="row">
                                         <div className="col-sm-12" style={styles.blockRight}>
                                             <img src={logo} />
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-sm-12" style={styles.blockCenter}>
+                                            <h4>{store.appName}</h4>
                                         </div>
                                     </div>
                                     <Bar data={data} options={options} />

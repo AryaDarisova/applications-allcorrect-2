@@ -104,7 +104,7 @@ function App() {
                 {id: "turkish", webId: "tr", name: "Turkish"},
                 {id: "ukrainian", webId: "uk", name: "Ukrainian"},
                 {id: "vietnamese", webId: "vn", name: "Vietnamese"}
-            ],  data: [], languageClearPercent: 0.10, languageClearPercentOnInput: 0.10},
+            ],  data: [], languageClearPercent: 0.10, languageClearPercentOnInput: 0.10, appName: ""},
     ])
 
     function storeCLick(id) {
@@ -129,9 +129,22 @@ function App() {
         }))
     }
 
+    function steamAddAppName(name) {
+        setGameStores(gameStores.map(store => {
+            if (store.id === "steam") {
+                store.appName = name;
+            }
+
+            return store
+        }))
+    }
+
     function getReviewsInfo(e) {
         e.preventDefault();
         let appId = e.target.elements.inputAppId.value;
+        let appName = e.target.elements.inputAppName.value;
+
+        steamAddAppName(appName);
 
         /*setGameStores(*/gameStores.map(store => {
             if (store.checked) {
@@ -359,7 +372,7 @@ function App() {
 
     async function steamGetGameName(appId) {
         let getNameResponse = await fetch(
-            `api/appdetails/?json=1&appids=${appId}`
+            /*`api/appdetails/?json=1&appids=${appId}`*/`api/appdetails?appids=${appId}`
         );
 
         if (getNameResponse.ok) {
@@ -431,7 +444,7 @@ function App() {
     return (
         <div className="wrapper">
             <Form gameStores={gameStores} storeCLick={storeCLick} getReviewsInfo={getReviewsInfo}
-                  steamRemoveEnglish={steamRemoveEnglish} /*googlePlayFoundByFilter={googlePlayFoundByFilter}*/ />
+                  steamRemoveEnglish={steamRemoveEnglish}/*googlePlayFoundByFilter={googlePlayFoundByFilter}*/ />
             <br />
             <ReviewsInfo gameStores={gameStores} setSteamLanguageClearPercent={setSteamLanguageClearPercent}
                          setSteamLanguageClearPercentOnInput={setSteamLanguageClearPercentOnInput}/>
