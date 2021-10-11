@@ -143,7 +143,7 @@ function App() {
         let appId = e.target.elements.inputAppId.value;
         console.log("appId", appId);
 
-        /*setGameStores(*/gameStores.map(store => {
+        gameStores.map(store => {
             if (store.checked) {
                 if (store.id === "googlePlay") {
                     countGooglePlayLanguages = 0;
