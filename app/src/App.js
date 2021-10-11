@@ -5,7 +5,6 @@ import ReviewsInfo from "./games_store_parser/ReviewsInfo";
 function App() {
     let countGooglePlayLanguages = 0;
     let countSteamLanguages = 0;
-    let googlePlayReviews = require('google-play-scraper');
 
     const [gameStores, setGameStores] = React.useState([
         {id: 'googlePlay', name: 'Google Play', checked: false, infoReady: false, data: [],
@@ -65,7 +64,7 @@ function App() {
                 {id: "polish", name: "Polish", countryCodes: ['PL']},
                 {id: "portugueseBRZ", name: "Portuguese (BRZ)", countryCodes: ['BR']},
                 {id: "portugueseEUR", name: "Portuguese (EUR)", countryCodes: ['PT']},
-                {id: "russian", name: "Russian", countryCodes: ['RU', 'BY', 'KZ', 'KG']},
+                {id: "russian", name: "Russian", countryCodes: ['RU', 'BY'/*, 'KZ', 'KG'*/]},
                 {id: "spanish", name: "Spanish", countryCodes: ['ES']},
                 {id: "swedish", name: "Swedish", countryCodes: ['SE']},
                 {id: "thai", name: "Thai", countryCodes: ['TH']},
@@ -142,9 +141,7 @@ function App() {
     function getReviewsInfo(e) {
         e.preventDefault();
         let appId = e.target.elements.inputAppId.value;
-        let appName = e.target.elements.inputAppName.value;
-
-        steamAddAppName(appName);
+        console.log("appId", appId);
 
         /*setGameStores(*/gameStores.map(store => {
             if (store.checked) {
@@ -153,103 +150,33 @@ function App() {
                     setInfoReady("googlePlay", false);
                     setInfoOnGet("googlePlay", true);
 
-                    /*if (store.removeEnglish) {
-                        for (let i = 0; i < store.languageList.length; i++) {
-                            if (store.languageList[i].id !== "english") {
-                                steamRekursivelyGetReviews("*", appId, store.languageList[i].id, store.languageList.length - 1);
-                            }
-                        }
-                    } else {*/
-                        for (let i = 0; i < store.languageList.length; i++) {
-                            for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
-                                googlePlayRekursivelyGetReviews(null, appId, store.languageList[i].languageCodes[j],
-                                    store.languageList.length, store.languageList[i].name);
-                            }
-                        }
-                    /*}*/
-
-
-                    /*
-                    setInfoReady("googlePlay", false);
-                    let googlePlayReviews = require('google-play-scraper');
 
                     for (let i = 0; i < store.languageList.length; i++) {
                         for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
-                            googlePlayReviews.app({
-                                appId: appId,
-                                lang: store.languageList[i].languageCodes[j]
-                            })
-                                .then(
-                                    result => {
-                                        let dataItem = {
-                                            "id": store.languageList[i].languageCodes[j],
-                                            "name": store.languageList[i].name,
-                                            "ratings": result.ratings,
-                                            "histogram": [result.histogram[1], result.histogram[2], result.histogram[3],
-                                                result.histogram[4], result.histogram[5]]
-                                        }
-
-                                        store.data.push(dataItem);
-
-                                        if (i === (store.languageList.length - 1) &&
-                                            j === (store.languageList[i].languageCodes.length - 1)) {
-                                            setInfoReady("googlePlay", true);
-                                        }
-                                    }
-                                )
-                                .catch(
-                                    error => {
-                                        alert("Ошибка " + error + " во время получения данных языка " +
-                                            store.languageList[i].name + " - " + store.languageList[i].languageCodes[j]);
-                                    }
-                                );
+                            googlePlayRekursivelyGetReviews(null, appId, store.languageList[i].languageCodes[j],
+                                store.languageList.length, store.languageList[i].name);
                         }
-                    }*/
+                    }
+
                 } else if (store.id === "appStore") {
                     setInfoReady("appStore", false);
-                    let appStoreReviews = require('app-store-scraper');
+                    // let appStoreReviews = require('app-store-scraper');
 
                     for (let i = 0; i < store.countryList.length; i++) {
                         for (let j = 0; j < store.countryList[i].countryCodes.length; j++) {
-                            appStoreReviews.ratings({
-                                id: appId,
-                                country: store.countryList[i].countryCodes[j]
-                            })
-                                .then(
-                                    result => {
-                                        let dataItem = {
-                                            "id": store.countryList[i].countryCodes[j],
-                                            "name": store.countryList[i].name,
-                                            "ratings": result.ratings,
-                                            "histogram": [result.histogram[1], result.histogram[2], result.histogram[3],
-                                                result.histogram[4], result.histogram[5]]
-                                        }
+                            let infoReadyBool = i === (store.countryList.length - 1) &&
+                                j === (store.countryList[i].countryCodes.length - 1);
 
-                                        store.data.push(dataItem);
-
-                                        if (i === (store.countryList.length - 1) &&
-                                            j === (store.countryList[i].countryCodes.length - 1)) {
-                                            setInfoReady("appStore", true);
-                                            /*setGameStores(gameStores.map(store => {
-                                                if (store.id === "appStore") {
-                                                    store.infoReady = true;
-                                                }
-
-                                                return store
-                                            }))*/
-                                        }
-                                    }
-                                )
-                                .catch(
-                                    error => {
-                                        alert("Ошибка " + error + " во время получения данных страны " +
-                                            store.countryList[i].name + " - " + store.countryList[i].countryCodes[j]);
-                                    }
-                                );
+                            appStoreRekursivelyGetReviews(appId, store.countryList[i].countryCodes[j],
+                                store.countryList[i].name, infoReadyBool);
                         }
                     }
                 } else if (store.id === "steam") {
+                    let appName = e.target.elements.inputAppName.value;
+
                     countSteamLanguages = 0;
+
+                    steamAddAppName(appName);
                     setInfoReady("steam", false);
                     setInfoOnGet("steam", true);
 
@@ -300,7 +227,6 @@ function App() {
     function setSteamLanguageClearPercent(value) {
         setGameStores(gameStores.map(store => {
             if (store.id === "steam") {
-                // store.languageClearPercent = store.languageClearPercentOnInput;
                 store.languageClearPercent = value;
                 console.log(store.languageClearPercent);
             }
@@ -321,53 +247,80 @@ function App() {
         }))
     }
 
-    /*async */function googlePlayRekursivelyGetReviews(nextPaginationToken, appId, lang, langLength, langName) {
-        googlePlayReviews.reviews({
-            appId: appId,
-            lang: lang,
-            sort: googlePlayReviews.sort.NEWEST,
-            paginate: true,
-            nextPaginationToken: nextPaginationToken,
-            /*headers: {
-                "Origin": "http://localhost:3000",
-                // "Origin": "https://applications-allcorrect-5742j.ondigitalocean.app",
-                "Cache-Control": "no-cache"
-            },*/
-            // requestOptions: {proxy: 'https://google.com'}
-        })
-            .then(
-                result => {
-                    // console.log(lang, result);
+    async function googlePlayRekursivelyGetReviews(nextPaginationToken, appId, lang, langLength, langName) {
+        const response = await fetch('/mobile_store_proxy/google_play', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({nextPaginationToken: nextPaginationToken, appId: appId, lang: lang})
+        });
+        let result = await response.json();
 
-                    setGameStores(gameStores.map(store => {
-                        if (store.id === "googlePlay") {
-                            for (let i = 0; i < result.data.length; i++) {
-                                let dataItem = {
-                                    "language": langName + " (" + lang + ")",
-                                    "score": result.data[i].score
-                                };
+        console.log(result);
 
-                                store.data.push(dataItem);
-                            }
-                        }
+        if ('error' in result) {
+            alert("Ошибка " + result.error + " во время получения данных языка " + langName);
+        } else {
+            setGameStores(gameStores.map(store => {
+                if (store.id === "googlePlay") {
+                    for (let i = 0; i < result.data.length; i++) {
+                        let dataItem = {
+                            "language": langName + " (" + lang + ")",
+                            "score": result.data[i].score
+                        };
 
-                        return store
-                    }))
-
-                    if (result.nextPaginationToken) {
-                        googlePlayRekursivelyGetReviews(result.nextPaginationToken, appId, lang, langLength, langName);
-                    } else {
-                        if (countGooglePlayLanguages === (langLength - 1)) {
-                            setInfoOnGet("googlePlay", false);
-                            setInfoReady("googlePlay", true);
-                        } else {
-                            countGooglePlayLanguages++;
-                        }
+                        store.data.push(dataItem);
                     }
                 }
-            );
 
+                return store
+            }))
 
+            if (result.nextPaginationToken) {
+                googlePlayRekursivelyGetReviews(result.nextPaginationToken, appId, lang, langLength, langName);
+            } else {
+                if (countGooglePlayLanguages === (langLength - 1)) {
+                    setInfoOnGet("googlePlay", false);
+                    setInfoReady("googlePlay", true);
+                } else {
+                    countGooglePlayLanguages++;
+                }
+            }
+        }
+    }
+
+    async function appStoreRekursivelyGetReviews(appId, countryCodes, countryName, infoReadyBool) {
+        const response = await fetch('/mobile_store_proxy/app_store', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({appId: appId, countryCodes: countryCodes})
+        });
+        let result = await response.json();
+
+        console.log(result);
+        if ('error' in result) {
+            alert("Ошибка " + result.error + " во время получения данных страны " +
+                countryName + " - " + countryCodes);
+        } else {
+            let dataItem = {
+                "id": countryCodes,
+                "name": countryName,
+                "ratings": result.ratings,
+                "histogram": [result.histogram[1], result.histogram[2], result.histogram[3],
+                    result.histogram[4], result.histogram[5]]
+            }
+
+            setGameStores(gameStores.map(store => {
+                if (store.id === "appStore") {
+                    store.data.push(dataItem);
+                }
+
+                return store
+            }))
+
+            if (infoReadyBool) {
+                setInfoReady("appStore", true);
+            }
+        }
     }
 
     async function steamGetGameName(appId) {
@@ -383,18 +336,6 @@ function App() {
     }
 
     async function steamRekursivelyGetReviews(cursor, appId, lang, langLength) {
-        /*let response = await fetch(
-            `https://applications-allcorrect-5742j.ondigitalocean.app:8080/store.steampowered.com/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Access-Control-Allow-Origin': 'https://store.steampowered.com',
-                    'Request-Method': 'GET',
-                    'Origin': 'https://applications-allcorrect-5742j.ondigitalocean.app',
-                    'Referer': 'https://applications-allcorrect-5742j.ondigitalocean.app',
-                    'x-requested-with': 'fetch'
-                }
-            });*/
-
         let response = await fetch(
             `/appreviews/${appId}?json=1&filter=recent&purchase_type=all&num_per_page=100&cursor=` + cursor + `&language=${lang}`
         );
@@ -418,7 +359,7 @@ function App() {
                 return store
             }))
 
-            if (json.reviews.length === 100) {
+            if (/*json.reviews.length === 100*/cursor !== encodeURIComponent(json.cursor)) {
                 steamRekursivelyGetReviews(encodeURIComponent(json.cursor), appId, lang, langLength);
             } else {
                 if (countSteamLanguages === (langLength - 1)) {

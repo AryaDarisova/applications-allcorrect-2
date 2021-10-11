@@ -1,5 +1,6 @@
 import React from "react";
 import {Bar} from "react-chartjs-2";
+import {defaults} from "react-chartjs-2";
 import AppStoreDiagram from "./AppStoreDiagram";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
@@ -333,6 +334,8 @@ export default function ReviewsInfo(props) {
                                 negativeData.push(value.negative);
                             });
 
+                            defaults.font.size = 16;
+
                             let data = {
                                 labels: labels,
                                 datasets: [
@@ -346,17 +349,26 @@ export default function ReviewsInfo(props) {
                                         data: positiveData,
                                         backgroundColor: 'rgb(54, 162, 235)',
                                     }
-                                ],
+                                ]
                             };
 
                             let options = {
                                 responsive: true,
                                 scales: {
                                     x: {
-                                        stacked: true,
+                                        stacked: true
                                     },
                                     y: {
                                         stacked: true
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        labels: {
+                                            font: {
+                                                size: 18
+                                            }
+                                        }
                                     }
                                 }
                             };
