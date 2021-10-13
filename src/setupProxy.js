@@ -20,7 +20,7 @@ module.exports = function (app) {
     app.use(
         '/mobile_store_proxy',
         proxy({
-            target: 'https://applications-allcorrect-5742j.ondigitalocean.app:3080',
+            target: 'http://localhost:3080',
             changeOrigin: true
         })
     );

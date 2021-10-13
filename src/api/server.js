@@ -5,7 +5,6 @@ const app = express(),
       port = 3080;
 
 let googlePlayReviews = require('google-play-scraper');
-// let appStoreReviews = require('app-store-scraper');
 let appStoreReviews = require('./app-store-scraper');
 
 app.use(bodyParser.json());
