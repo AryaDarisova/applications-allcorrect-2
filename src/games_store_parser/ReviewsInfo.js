@@ -39,7 +39,7 @@ const styles = {
 
 export default function ReviewsInfo(props) {
     const [storesAddFilter, setStoresAddFilter] = React.useState([
-        {id: 'googlePlay', clearLanguages: true, languageClearPercent: 0.10, switchChartBarToPie: true},
+        {id: 'googlePlay', clearLanguages: true, languageClearPercent: 0.10, switchChartBarToPie: false},
         {id: 'appStore', clearLanguages: true, languageClearPercent: 0.10, switchChartBarToPie: false},
         {id: 'steam', clearLanguages: true, languageClearPercent: 0.10}
     ])
