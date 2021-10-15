@@ -7,7 +7,7 @@ function App() {
   let countSteamLanguages = 0;
 
   const [gameStores, setGameStores] = React.useState([
-    {id: 'googlePlay', name: 'Google Play', checked: false, infoReady: false, data: [],
+    {id: 'googlePlay', name: 'Google Play', checked: false, infoReady: false, data: [], reviewsCount: 0,
       languageList: [
         {id: "arabic", name: "Arabic", languageCodes: ['AR']},
         {id: "chineseSimpl", name: "Chinese (Simpl)", languageCodes: ['ZH-CN']},
@@ -103,7 +103,7 @@ function App() {
         {id: "turkish", webId: "tr", name: "Turkish"},
         {id: "ukrainian", webId: "uk", name: "Ukrainian"},
         {id: "vietnamese", webId: "vn", name: "Vietnamese"}
-      ],  data: [], languageClearPercent: 0.10, languageClearPercentOnInput: 0.10, appName: ""},
+      ],  data: [], languageClearPercent: 0.10, languageClearPercentOnInput: 0.10, appName: "", reviewsCount: 0},
   ])
 
   function storeCLick(id) {
@@ -149,7 +149,6 @@ function App() {
           countGooglePlayLanguages = 0;
           setInfoReady("googlePlay", false);
           setInfoOnGet("googlePlay", true);
-
 
           for (let i = 0; i < store.languageList.length; i++) {
             for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
@@ -270,10 +269,14 @@ function App() {
 
             store.data.push(dataItem);
           }
+
+          store.reviewsCount += result.data.length;
         }
 
         return store
       }))
+
+      console.log("countGooglePlayLanguages", countGooglePlayLanguages, "langLength", langLength, "result.nextPaginationToken", result.nextPaginationToken);
 
       if (result.nextPaginationToken) {
         googlePlayRekursivelyGetReviews(result.nextPaginationToken, appId, lang, langLength, langName);
@@ -285,6 +288,8 @@ function App() {
           countGooglePlayLanguages++;
         }
       }
+
+      console.log("countGooglePlayLanguages", countGooglePlayLanguages);
     }
   }
 
@@ -354,12 +359,14 @@ function App() {
 
             store.data.push(dataItem);
           }
+
+          store.reviewsCount += json.reviews.length;
         }
 
         return store
       }))
 
-      if (/*json.reviews.length === 100*/cursor !== encodeURIComponent(json.cursor)) {
+      if (cursor !== encodeURIComponent(json.cursor)) {
         steamRekursivelyGetReviews(encodeURIComponent(json.cursor), appId, lang, langLength);
       } else {
         if (countSteamLanguages === (langLength - 1)) {

@@ -446,7 +446,7 @@ export default function ReviewsInfo(props) {
                                         </div>
                                         <div className="col-sm-4" style={styles.blockView}>
                                             <div style={styles.blockCenter}>
-                                                Загрузка данных <FontAwesomeIcon icon={faSpinner} spin/>
+                                                Получено {store.reviewsCount} отзывов <FontAwesomeIcon icon={faSpinner} spin/>
                                             </div>
                                         </div>
                                         <div className="col-sm-4">
@@ -464,7 +464,7 @@ export default function ReviewsInfo(props) {
                                         </div>
                                         <div className="col-sm-4" style={styles.blockView}>
                                             <div style={styles.blockCenter}>
-                                                Загрузка данных <FontAwesomeIcon icon={faSpinner} spin/>
+                                                Получено {store.reviewsCount} отзывов <FontAwesomeIcon icon={faSpinner} spin/>
                                             </div>
                                         </div>
                                         <div className="col-sm-4">
