@@ -15,9 +15,9 @@ export default function AppStoreDiagram(props) {
         labels: props.data.histogram,
         datasets: [
             {
-                // label: "Review Avg. " + props.data.ratings,
                 data: props.data.histogram,
-                backgroundColor: ["#E74C3C", "#f18b0e", "#F1C40E", "#CAEA3D", "#2ECC71"],
+                // backgroundColor: ["#E74C3C", "#f18b0e", "#F1C40E", "#CAEA3D", "#2ECC71"],
+                backgroundColor: ["#da6363", "#f9c19c", "#fff2cc", "#d9ead3", "#a7bf9c"],
             }
         ],
     };
@@ -35,20 +35,8 @@ export default function AppStoreDiagram(props) {
         }
     }
 
-    /*let options = {
-        responsive: true,
-        scales: {
-            x: {
-                stacked: true,
-            },
-            y: {
-                stacked: true
-            }
-        }
-    };*/
-
     return (
-        <div /*className="col-sm-4"*/style={styles.columnBlock}>
+        <div style={styles.columnBlock}>
             <div style={styles.blockView}>
                 <Pie data={data} options={options} />
             </div>

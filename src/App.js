@@ -4,6 +4,7 @@ import ReviewsInfo from "./games_store_parser/ReviewsInfo";
 
 function App() {
   let countGooglePlayLanguages = 0;
+  let countGooglePlayLanguageCodes = 0;
   let countSteamLanguages = 0;
 
   const [gameStores, setGameStores] = React.useState([
@@ -141,7 +142,7 @@ function App() {
   function getReviewsInfo(e) {
     e.preventDefault();
     let appId = e.target.elements.inputAppId.value;
-    console.log("appId", appId);
+    // console.log("appId", appId);
 
     gameStores.map(store => {
       if (store.checked) {
@@ -153,7 +154,7 @@ function App() {
           for (let i = 0; i < store.languageList.length; i++) {
             for (let j = 0; j < store.languageList[i].languageCodes.length; j++) {
               googlePlayRekursivelyGetReviews(null, appId, store.languageList[i].languageCodes[j],
-                  store.languageList.length, store.languageList[i].name);
+                  store.languageList.length, store.languageList[i].name, store.languageList[i].languageCodes.length);
             }
           }
 
@@ -227,7 +228,6 @@ function App() {
     setGameStores(gameStores.map(store => {
       if (store.id === "steam") {
         store.languageClearPercent = value;
-        console.log(store.languageClearPercent);
       }
 
       return store
@@ -235,8 +235,6 @@ function App() {
   }
 
   function setSteamLanguageClearPercentOnInput(e) {
-    console.log("попали в изменение процентов on input");
-
     setGameStores(gameStores.map(store => {
       if (store.id === "steam") {
         store.languageClearPercentOnInput = e.target.elements.inputSteamClearLanguagesPercent.value;
@@ -246,7 +244,7 @@ function App() {
     }))
   }
 
-  async function googlePlayRekursivelyGetReviews(nextPaginationToken, appId, lang, langLength, langName) {
+  async function googlePlayRekursivelyGetReviews(nextPaginationToken, appId, lang, langLength, langName, langCodesLength) {
     const response = await fetch('/mobile_store_proxy/google_play', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -276,20 +274,23 @@ function App() {
         return store
       }))
 
-      console.log("countGooglePlayLanguages", countGooglePlayLanguages, "langLength", langLength, "result.nextPaginationToken", result.nextPaginationToken);
+      /*console.log(lang, "countGooglePlayLanguages", countGooglePlayLanguages, "langLength", langLength,
+          "countGooglePlayLanguageCodes", countGooglePlayLanguageCodes, "langCodesLength", langCodesLength);*/
 
       if (result.nextPaginationToken) {
-        googlePlayRekursivelyGetReviews(result.nextPaginationToken, appId, lang, langLength, langName);
+        googlePlayRekursivelyGetReviews(result.nextPaginationToken, appId, lang, langLength, langName, langCodesLength);
       } else {
         if (countGooglePlayLanguages === (langLength - 1)) {
-          setInfoOnGet("googlePlay", false);
-          setInfoReady("googlePlay", true);
+          if (countGooglePlayLanguageCodes === (langCodesLength - 1)) {
+            setInfoOnGet("googlePlay", false);
+            setInfoReady("googlePlay", true);
+          } else {
+            countGooglePlayLanguageCodes++;
+          }
         } else {
           countGooglePlayLanguages++;
         }
       }
-
-      console.log("countGooglePlayLanguages", countGooglePlayLanguages);
     }
   }
 
