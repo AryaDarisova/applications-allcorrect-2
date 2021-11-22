@@ -298,10 +298,21 @@ export default function ReviewsInfo(props) {
                                   let value = new Map();
 
                                   if (!values.has(item.language)) {
+                                      let positive = 0;
+                                      let negative = 0;
+
+                                      if (item.voted_up) {
+                                          positive++;
+                                      } else {
+                                          negative++;
+                                      }
+
+                                      allReviewsCount++;
+
                                       value.set("name", item.language);
-                                      value.set("positive", 0);
-                                      value.set("negative", 0);
-                                      value.set("all", 0);
+                                      value.set("positive", positive);
+                                      value.set("negative", negative);
+                                      value.set("all", 1);
 
                                       values.set(item.language, value);
                                   } else {
