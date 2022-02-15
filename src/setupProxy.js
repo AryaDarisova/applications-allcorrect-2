@@ -24,4 +24,12 @@ module.exports = function (app) {
             changeOrigin: true
         })
     );
+
+    app.use(
+        '/project_bible_template',
+        proxy({
+            target: 'http://localhost:3080',
+            changeOrigin: true
+        })
+    );
 };

@@ -1,6 +1,22 @@
 import React from "react";
 import Form from "./games_store_parser/Form";
 import ReviewsInfo from "./games_store_parser/ReviewsInfo";
+import Login from "./auth/Login";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import GameStoreParser from "./games_store_parser/GameStoreParser";
+import ManagedQualityOnProjectView from "./managed_quality_on_project/view/ManagedQualityOnProjectView";
+import ManagedQualityOnProjectCreate from "./managed_quality_on_project/create/ManagedQualityOnProjectCreate";
+import ProjectBibleTemplateHeader from "./managed_quality_on_project/project_bible/template_header/ProjectBibleTemplateHeader";
+import ProjectBibleTemplateBody from "./managed_quality_on_project/project_bible/template_body/ProjectBibleTemplateBody";
+import ProjectBibleView from "./managed_quality_on_project/project_bible/view/ProjectBibleView";
+import logo from "./img/logo1.png";
+
+const styles = {
+  companyLogoStyle: {
+    paddingLeft: '3rem',
+    // margin: '.5rem'
+  }
+}
 
 function App() {
   let countGooglePlayLanguages = 0;
@@ -382,7 +398,7 @@ function App() {
     }
   }
 
-  function getEngSteamId (steamArr, id) {
+  function getEngSteamId(steamArr, id) {
     for (let i = 0; i < steamArr.length; i++) {
       if (steamArr[i].id === id) {
         return steamArr[i].name;
@@ -390,13 +406,44 @@ function App() {
     }
   }
 
+  function authLogIn() {
+
+  }
+
+
+
   return (
-      <div className="wrapper">
-        <Form gameStores={gameStores} storeCLick={storeCLick} getReviewsInfo={getReviewsInfo}
-              steamRemoveEnglish={steamRemoveEnglish}/*googlePlayFoundByFilter={googlePlayFoundByFilter}*/ />
-        <br />
-        <ReviewsInfo gameStores={gameStores} setSteamLanguageClearPercent={setSteamLanguageClearPercent}
-                     setSteamLanguageClearPercentOnInput={setSteamLanguageClearPercentOnInput}/>
+      <div>
+        <nav className="navbar navbar-expand-lg navbar-light bg-dark">
+          <div className="col-12">
+            <div style={styles.companyLogoStyle}>
+              <a className="navbar-brand" href="#">
+                <img src={logo} alt="logo" width="163" height="33"/>
+              </a>
+            </div>
+          </div>
+        </nav>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={/*{<Login authLogIn={authLogIn} />}*/<GameStoreParser
+                gameStores={gameStores} storeCLick={storeCLick} getReviewsInfo={getReviewsInfo}
+                steamRemoveEnglish={steamRemoveEnglish} setSteamLanguageClearPercent={setSteamLanguageClearPercent}
+                setSteamLanguageClearPercentOnInput={setSteamLanguageClearPercentOnInput} />} />
+            <Route path="/game_store_parser" element={<GameStoreParser
+                gameStores={gameStores} storeCLick={storeCLick} getReviewsInfo={getReviewsInfo}
+                steamRemoveEnglish={steamRemoveEnglish} setSteamLanguageClearPercent={setSteamLanguageClearPercent}
+                setSteamLanguageClearPercentOnInput={setSteamLanguageClearPercentOnInput} /> } />
+            <Route path="/managed_quality_on_project/project_bible/template_header" element={<ProjectBibleTemplateHeader /> } />
+            <Route path="/managed_quality_on_project/project_bible/template_body" element={<ProjectBibleTemplateBody /> } />
+            <Route path="/managed_quality_on_project/project_bible/view" element={<ProjectBibleView /> } />
+
+
+
+
+            <Route path="/managed_quality_on_project_create" element={<ManagedQualityOnProjectCreate /> } />
+            <Route path="/managed_quality_on_project_view" element={<ManagedQualityOnProjectView /> } />
+          </Routes>
+        </BrowserRouter>
       </div>
   );
 }

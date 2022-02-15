@@ -1,0 +1,14 @@
+.managedQualityOnProjectBlockView {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 5px;
+    margin: .5rem;
+}
+
+.center {
+    text-align: center;
+}
+
+.inputInTd {
+    width: 100%;
+}
