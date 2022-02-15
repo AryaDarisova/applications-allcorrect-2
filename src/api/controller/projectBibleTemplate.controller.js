@@ -120,7 +120,7 @@ class ProjectBibleTemplateController {
     async getProjectBibleColumnsRowsTemplate(req, res) {
         //todo тут для получения колонок надо поставить условие, что active = true & col_for_client = false
         const columns = await db.query(
-            'SELECT code, name, type, editable, template FROM project_bible_template ORDER BY num'
+            'SELECT code, name, type, editable, template FROM project_bible_template WHERE active = true AND col_for_client = false ORDER BY num'
         )
         const rows = await db.query(
             'SELECT code FROM project_bible_template_rows ORDER BY num')
